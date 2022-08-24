@@ -1,3 +1,4 @@
+const { render } = require('ejs');
 const express = require('express')
 const mongoose = require('mongoose');
 const Todo = require('./models/todo')
@@ -12,8 +13,10 @@ app.use(express.urlencoded({ extended: true }));
 
 // todo routes 
 app.get('/', (req, res) => {
-    res.render('second')
+    res.redirect('/todo')
 });
+
+
 
 app.get('/todo', (req, res)=>{
    
@@ -22,6 +25,18 @@ app.get('/todo', (req, res)=>{
     })
    })
 
+   app.delete('/todo/:id', (req, res) => {
+    const id = req.params.id;
+
+    Todo.findByIdAndDelete(id).then( result => {
+      res.json({redirect: '/todo'})
+    }).catch (e => {
+      console.log(e)
+    })
+   })
+
+   //middleware
+   app.use(express.static('public'))
 //post
 app.post('/todo', (req, res)=>{
  const todo = new Todo(req.body)
